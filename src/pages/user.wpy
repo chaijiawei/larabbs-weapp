@@ -1,0 +1,11 @@
+<template>
+  <view class="container">
+    <h3>我的</h3>
+  </view>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.page({})
+</script>

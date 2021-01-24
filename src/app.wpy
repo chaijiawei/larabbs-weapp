@@ -1,0 +1,49 @@
+<style lang="less">
+  @import (css) './assets/app.wxss';
+
+  .page {
+    background-color: #FFFFFF;
+  }
+</style>
+
+<script>
+import wepy from '@wepy/core'
+import vuex from '@wepy/x'
+
+wepy.use(vuex)
+
+wepy.app({
+  onLaunch() {
+  },
+  methods: {
+  }
+})
+
+
+</script>
+
+<config>
+{
+  pages: [
+    'pages/index',
+    'pages/user'
+  ],
+  window: {
+    backgroundTextStyle: 'light',
+    navigationBarBackgroundColor: '#fff',
+    navigationBarTitleText: 'WeChat',
+    navigationBarTextStyle: 'black'
+  },
+  tabBar: {
+    list: [{
+      pagePath: 'pages/index',
+      text: '首页',
+    }, {
+      pagePath: 'pages/user',
+      text: '我的',
+    }],
+    color: '#707070',
+    selectedColor: '#00b5ad'
+  }
+}
+</config>
