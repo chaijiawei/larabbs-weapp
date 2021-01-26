@@ -9,8 +9,10 @@
 <script>
 import wepy from '@wepy/core'
 import vuex from '@wepy/x'
+import promisify  from '@wepy/use-promisify'
 
 wepy.use(vuex)
+wepy.use(promisify)
 
 wepy.app({
   onLaunch() {
@@ -26,7 +28,8 @@ wepy.app({
 {
   pages: [
     'pages/index',
-    'pages/user'
+    'pages/user',
+    'pages/auth/login'
   ],
   window: {
     backgroundTextStyle: 'light',
