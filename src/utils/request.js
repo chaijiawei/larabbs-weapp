@@ -1,5 +1,5 @@
 import wepy from '@wepy/core'
-
+import keys from 'lodash/keys'
 // 服务器接口地址
 const host = 'http://larabbs-api.test/api/v1/'
 
@@ -37,7 +37,14 @@ const request = async (url, options = {}, showLoading = true) => {
     })
   }
 
-  const error = new Error(response.data.message)
+  let errorMessage = response.data.message;
+  if(response.data.errors) {
+    errorMessage = response.data.errors[
+        keys(response.data.errors)[0]
+      ].shift()
+  }
+  const error = new Error(errorMessage)
+  error.msg = errorMessage
   error.response = response
   return Promise.reject(error)
 }
