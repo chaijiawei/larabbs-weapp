@@ -64,7 +64,7 @@
 </config>
 <script>
 import wepy from '@wepy/core'
-import { login } from '@/api/auth'
+import store from '@/store'
 import WeValidator from 'we-validator'
 
 WeValidator.addRule('confirmed', {
@@ -75,6 +75,7 @@ WeValidator.addRule('confirmed', {
 })
 
 wepy.page({
+  store,
   data: {
     // 用户名
     form: {},
@@ -101,17 +102,9 @@ wepy.page({
       params.code = loginData.code
 
       try {
-        const loginResponse = await login(params)
-
-        const accessToken = loginResponse.data.access_token
-        const accessTokenExpiredAt = new Date().getTime() + loginResponse.data.expires_in * 1000
-
-        wx.setStorageSync('access_token', accessToken)
-        wx.setStorageSync('access_token_expired_at', accessTokenExpiredAt)
-
+        await this.$store.dispatch('login', this.form)
         wx.navigateBack()
-
-      } catch(err) {
+      } catch (err) {
         this.hasError = true
         this.errorMessage = err.msg
       }
@@ -150,24 +143,9 @@ wepy.page({
   // 页面打开事件
   async onShow() {
     try {
-      // 获取微信登录 code
-      const loginData = await wx.login()
-
-      // 请求登录接口
-      const loginResponse = await login({
-        code: loginData.code
-      })
-
-      //如果找到code对应的用户则保存 token 和过期时间，然后返回
-      const accessToken = loginResponse.data.access_token
-      const accessTokenExpiredAt = new Date().getTime() + loginResponse.data.expires_in * 1000
-
-      wx.setStorageSync('access_token', accessToken)
-      wx.setStorageSync('access_token_expired_at', accessTokenExpiredAt)
-
+      await this.$store.dispatch('login')
       wx.navigateBack()
-
-    } catch(err) {
+    } catch (err) {
     }
   },
 
