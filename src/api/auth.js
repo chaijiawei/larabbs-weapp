@@ -6,3 +6,21 @@ export function login(data) {
     data: data
   })
 }
+
+export function refresh(token) {
+  return request('jwt_token', {
+    method: 'put',
+    header: {
+      'Authorization': 'Bearer ' + token
+    }
+  })
+}
+
+export function logout(token) {
+  return request('jwt_token', {
+    method: 'delete',
+    header: {
+      'Authorization': 'Bearer ' + token
+    }
+  })
+}
