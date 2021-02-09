@@ -1,5 +1,5 @@
 import wepy from '@wepy/core'
-import { login, refresh, logout } from '@/api/auth'
+import { login, logout, refresh, register } from '@/api/auth'
 import * as auth from '@/utils/auth'
 import isEmpty from 'lodash/isEmpty'
 import { getCurrentUser } from '@/api/user'
@@ -51,18 +51,24 @@ const actions = {
   },
 
   async logout ({ commit, state }) {
-    try {
-      await logout(state.accessToken)
-    } catch(err) {
-      // 清空 storage
-      auth.logout()
-      commit('resetState')
-    }
+    await logout(state.accessToken)
 
     // 清空 storage
     auth.logout()
     commit('resetState')
-  }
+  },
+
+  async register ({ dispatch, commit }, params = {}) {
+    const loginData = await wepy.wx.login()
+    params.code = loginData.code
+
+    const response = await register(params)
+
+    commit('setToken', response.data)
+    auth.setToken(response.data)
+
+    dispatch('getUser')
+  },
 }
 
 // 定义 mutations

@@ -24,3 +24,30 @@ export function logout(token) {
     }
   })
 }
+
+export function getCaptcha(phone) {
+  return request('captcha', {
+    method: 'post',
+    data: {
+      phone: phone
+    }
+  })
+}
+
+export function getVerificationCode(phone, key, code) {
+  return request('phone_code', {
+    method: 'post',
+    data: {
+      phone: phone,
+      captcha_key: key,
+      captcha: code
+    }
+  })
+}
+
+export function register(data) {
+  return request('miniprogram/users', {
+    method: 'post',
+    data: data
+  })
+}

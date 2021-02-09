@@ -38,6 +38,11 @@
           </div>
         </div>
 
+        <div class="weui-cells__tips">
+          如果你还没有 Larabbs 用户可以
+          <a url="/pages/auth/register">注册新用户</a>
+        </div>
+
         <div class="weui-btn-area">
           <button class="weui-btn" type="primary" @tap="submit">登录</button>
         </div>
@@ -96,7 +101,7 @@ wepy.page({
         onMessage: (data) => {
           this.hasError = true;
           this.errorMessage = data.msg;
-          this.errors[data.name] = data.msg;
+          this.$set(this.errors, data.name, data.msg)
         },
         rules: {
           username: {
