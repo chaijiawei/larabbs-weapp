@@ -51,7 +51,13 @@ const actions = {
   },
 
   async logout ({ commit, state }) {
-    await logout(state.accessToken)
+    try {
+      await logout(state.accessToken)
+    } catch(err) {
+      // 清空 storage
+      auth.logout()
+      commit('resetState')
+    }
 
     // 清空 storage
     auth.logout()

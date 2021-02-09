@@ -36,18 +36,6 @@
               <icon type="warn" size="23" color="#E64340"></icon>
             </div>
           </div>
-
-          <div class="weui-cell weui-cell_input" :class="{'weui-cell_warn': errors.password}">
-            <div class="weui-cell__hd">
-              <div class="weui-label">确认密码</div>
-            </div>
-            <div class="weui-cell__bd">
-              <input class="weui-input" placeholder="确认密码" v-model="form.password_confirmation" type="password" />
-            </div>
-            <div v-if="errors.password" class="weui-cell__ft">
-              <icon type="warn" size="23" color="#E64340"></icon>
-            </div>
-          </div>
         </div>
 
         <div class="weui-btn-area">
@@ -66,13 +54,6 @@
 import wepy from '@wepy/core'
 import store from '@/store'
 import WeValidator from 'we-validator'
-
-WeValidator.addRule('confirmed', {
-  message: '两次输入的密码不一致',
-  rule(value, param) {
-    return value === this.data.password_confirmation;
-  }
-})
 
 wepy.page({
   store,
@@ -125,7 +106,6 @@ wepy.page({
           password: {
             required: true,
             minlength: 8,
-            confirmed: true,
           },
         },
         messages: {
