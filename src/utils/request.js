@@ -21,34 +21,7 @@ const request = async (url, options = {}, showLoading = true) => {
     wx.hideLoading()
   }
 
-  if (response.statusCode >= 200 && response.statusCode < 300) {
-    return response
-  }
-
-  if (response.statusCode === 429) {
-    wx.showModal({
-      title: '提示',
-      content: '请求太频繁，请稍后再试'
-    })
-  }
-
-  if (response.statusCode === 500) {
-    wx.showModal({
-      title: '提示',
-      content: '服务器错误，请联系管理员或重试'
-    })
-  }
-
-  let errorMessage = response.data.message;
-  if(response.data.errors) {
-    errorMessage = response.data.errors[
-        keys(response.data.errors)[0]
-      ].shift()
-  }
-  const error = new Error(errorMessage)
-  error.msg = errorMessage
-  error.response = response
-  return Promise.reject(error)
+  return _response(response);
 }
 
 const checkToken = async () => {
@@ -76,7 +49,63 @@ const authRequest = async (url, options = {}, showLoading = true) => {
   return await request(url, options, showLoading)
 }
 
+const uploadFile = async (url, options = {}, showLoading = true) => {
+  // 显示加载中
+  if (showLoading) {
+    wx.showLoading({title: '加载中'})
+  }
+  // 拼接请求地址
+  options.url = host + url
+
+  await checkToken()
+
+  options.header = {
+    Authorization: 'Bearer ' + store.getters.accessToken
+  }
+
+  let response = await wepy.wx.uploadFile(options)
+
+  if (showLoading) {
+    // 隐藏加载中
+    wx.hideLoading()
+  }
+  response.data = JSON.parse(response.data)
+  return _response(response);
+}
+
+function _response(response) {
+  if (response.statusCode >= 200 && response.statusCode < 300) {
+    return response
+  }
+
+  if (response.statusCode === 429) {
+    wx.showModal({
+      title: '提示',
+      content: '请求太频繁，请稍后再试'
+    })
+  }
+
+  if (response.statusCode === 500) {
+    wx.showModal({
+      title: '提示',
+      content: '服务器错误，请联系管理员或重试'
+    })
+  }
+
+  let errorMessage = response.data.message;
+  if(response.data.errors) {
+    errorMessage = response.data.errors[
+      keys(response.data.errors)[0]
+      ].shift()
+  }
+  const error = new Error(errorMessage)
+  error.msg = errorMessage
+  error.response = response
+  return Promise.reject(error)
+}
+
 export {
   request,
   authRequest,
+  uploadFile,
 }

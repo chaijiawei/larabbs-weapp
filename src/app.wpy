@@ -28,7 +28,8 @@ wepy.app({
 {
   pages: [
     'pages/index',
-    'pages/user',
+    'pages/users/me',
+    'pages/users/edit',
     'pages/auth/login',
     'pages/auth/register',
   ],
@@ -43,7 +44,7 @@ wepy.app({
       pagePath: 'pages/index',
       text: '首页',
     }, {
-      pagePath: 'pages/user',
+      pagePath: 'pages/users/me',
       text: '我的',
     }],
     color: '#707070',

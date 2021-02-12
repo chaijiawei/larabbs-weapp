@@ -2,7 +2,7 @@ import wepy from '@wepy/core'
 import { login, logout, refresh, register } from '@/api/auth'
 import * as auth from '@/utils/auth'
 import isEmpty from 'lodash/isEmpty'
-import { getCurrentUser } from '@/api/user'
+import { getCurrentUser, updateUser } from '@/api/user'
 
 const getDefaultState = () => {
   return {
@@ -69,6 +69,14 @@ const actions = {
 
     dispatch('getUser')
   },
+
+  async updateUser ({ commit }, params = {}) {
+
+    const editResponse = await updateUser(params)
+
+    commit('setUser', editResponse.data)
+    auth.setUser(editResponse.data)
+  }
 }
 
 // 定义 mutations
