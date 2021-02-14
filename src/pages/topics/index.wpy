@@ -90,6 +90,7 @@
 import wepy from '@wepy/core'
 import { getTopics, getCategories } from '@/api/topic'
 import listRefresh from '@/mixins/list-refresh.js'
+import eventHub from '@/common/eventHub'
 
 wepy.page({
   mixins: [ listRefresh ],
@@ -112,6 +113,12 @@ wepy.page({
   async onLoad() {
     await this.loadData()
     await this.loadCategories()
+
+    eventHub.$on('topic-deleted', () => {
+      this.page = 1
+      this.noMoreData = false
+      this.loadData(true)
+    })
   },
   methods: {
     async loadCategories() {
@@ -122,7 +129,8 @@ wepy.page({
     async fetchData() {
       let params = {
         page: this.page,
-        include: 'user,category'
+        include: 'user,category',
+        'filter[with_order]': 'recentReply',
       }
 
       if (this.currentCategoryId) {

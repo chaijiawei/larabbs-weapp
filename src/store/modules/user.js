@@ -2,24 +2,26 @@ import wepy from '@wepy/core'
 import { login, logout, refresh, register } from '@/api/auth'
 import * as auth from '@/utils/auth'
 import isEmpty from 'lodash/isEmpty'
-import { getCurrentUser, updateUser } from '@/api/user'
+import { getCurrentUser, updateUser, getUserPermissions } from '@/api/user'
 
 const getDefaultState = () => {
   return {
     user: auth.getUser(),
     accessToken: auth.getToken(),
-    accessTokenExpiredAt: auth.getTokenExpiredAt()
+    accessTokenExpiredAt: auth.getTokenExpiredAt(),
+    permissions: auth.getPermissions(),
   }
 }
 
 const state = getDefaultState()
 
 // 定义 getters
-var getters = {
+const getters = {
   isLoggedIn: state => !isEmpty(state.accessToken),
   user: state => state.user,
   accessToken: state => state.accessToken,
-  accessTokenExpiredAt: state => state.accessTokenExpiredAt
+  accessTokenExpiredAt: state => state.accessTokenExpiredAt,
+  permissions: state => state.permissions,
 }
 
 // 定义 actions
@@ -34,6 +36,7 @@ const actions = {
     auth.setToken(authResponse.data)
 
     dispatch('getUser')
+    dispatch('getUserPermissions')
   },
 
   async refresh ({ dispatch, commit, state }, params = {}) {
@@ -48,6 +51,13 @@ const actions = {
 
     commit('setUser', userResponse.data)
     auth.setUser(userResponse.data)
+  },
+
+  async getUserPermissions({commit}) {
+    const permissions = await getUserPermissions()
+
+    commit('setUserPermissions', permissions.data)
+    auth.setPermissions(permissions.data)
   },
 
   async logout ({ commit, state }) {
@@ -88,6 +98,10 @@ const mutations = {
   setToken(state, tokenPayload) {
     state.accessToken = tokenPayload.access_token
     state.accessTokenExpiredAt = new Date().getTime() + tokenPayload.expires_in * 1000
+  },
+
+  setUserPermissions(state, permissions) {
+    state.permissions = permissions
   },
 
   resetState: (state) => {

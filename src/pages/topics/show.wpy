@@ -15,6 +15,9 @@
 .topic-title {
   padding: 15px;
 }
+.delete-button {
+  margin-top: 15px;
+}
 </style>
 <template>
   <div class="page">
@@ -40,6 +43,7 @@
       </div>
       <div class="weui-article">
         <rich-text :nodes="topic.body"></rich-text>
+        <button v-if="canDelete" @tap="deleteTopic" class="weui-btn weui-btn_mini delete-button" type="default" size="mini">删除</button>
       </div>
     </div>
   </div>
@@ -54,25 +58,85 @@
 </config>
 <script>
 import wepy from '@wepy/core'
-import { getTopic } from '@/api/topic'
+import store from '@/store'
+import { mapGetters } from '@wepy/x'
+import { getTopic, deleteTopic } from '@/api/topic'
+import eventHub from '@/common/eventHub'
+import find from 'lodash/find'
 
 wepy.page({
+  store,
   data: {
     // 话题数据
-    topic: null
+    topic: null,
+  },
+  computed: {
+    ...mapGetters(['user', 'isLoggedIn', 'permissions']),
+    // 是否可以删除话题
+    canDelete() {
+      if (this.isLoggedIn && this.topic) {
+        if(this.user.id === this.topic.user_id) { //话题拥有者
+          return true
+        } else { //判断权限
+          //如果拥有 manage_contents 则可以删除
+          if(find(this.permissions, function(permission) {
+            return permission.name === 'manage_contents'
+          })) {
+            return true
+          }
+        }
+      }
+
+      return false;
+    }
   },
   methods: {
     // 获取话题数据
     async loadTopic(id) {
-      const topicResponse = await getTopic(id, {
-        include: 'user,category'
+      try {
+        const topicResponse = await getTopic(id, {
+          include: 'user,category'
+        })
+
+        this.topic = topicResponse.data
+      } catch(err) {
+        wx.showModal({
+          title: '提示',
+          content: '话题不存在'
+        })
+      }
+    },
+    async deleteTopic() {
+      // 删除确认
+      const res = await wepy.wx.showModal({
+        title: '确认删除',
+        content: '您确认删除该话题吗',
+        confirmText: '删除',
+        cancelText: '取消'
       })
 
-      this.topic = topicResponse.data
+      // 用户点击取消后返回
+      if (!res.confirm) {
+        return
+      }
+
+      // 调用接口删除话题
+      const deleteResponse = await deleteTopic(this.topic.id)
+
+      wx.showToast({
+        title: '删除成功',
+        icon: 'success'
+      })
+
+      // 2 秒后返回上一页
+      setTimeout(() => {
+        eventHub.$emit('topic-deleted');
+        wx.navigateBack()
+      }, 2000)
     }
   },
   onLoad(options) {
-     this.loadTopic(options.id)
+    this.loadTopic(options.id)
   }
 })
 </script>

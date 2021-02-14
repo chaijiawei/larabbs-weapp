@@ -25,3 +25,11 @@ export function setToken(tokenPayload) {
 export function logout() {
   return wx.clearStorage()
 }
+
+export function setPermissions(permissions) {
+  return wx.setStorageSync('permissions');
+}
+
+export function getPermissions() {
+  return wx.getStorageSync('permissions');
+}

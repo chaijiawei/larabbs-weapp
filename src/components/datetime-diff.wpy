@@ -12,7 +12,11 @@ wepy.component({
   },
   computed: {
     formatDatetime: function() {
-      return diffForHumans(this.datetime)
+      if(this.datetime) {
+        return diffForHumans(this.datetime)
+      }
+
+      return '';
     }
   },
 })
