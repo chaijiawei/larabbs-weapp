@@ -141,7 +141,7 @@ wepy.page({
     // 表单错误
     errors: {},
     // 短信验证码 key 及过期时间
-    verificationCode: {}
+    verificationCode: {},
   },
   onReady(){
     this.initValidator()
@@ -298,16 +298,16 @@ wepy.page({
         let formData = this.form
         formData.verify_key = this.verificationCode.key
 
-        console.log(formData)
         await this.$store.dispatch('register', formData)
-
         wx.showToast({
           title: '注册成功',
-          icon: 'success'
+          icon: 'success',
+          duration: 2000,
         })
 
         // 跳转到我的页面
         setTimeout(async () => {
+          await this.$store.dispatch('login')
           wx.switchTab({
             url: '/pages/users/me'
           })

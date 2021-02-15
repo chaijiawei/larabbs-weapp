@@ -96,7 +96,7 @@ function _response(response) {
   if(response.data.errors) {
     errorMessage = response.data.errors[
       keys(response.data.errors)[0]
-      ].shift()
+      ][0]
   }
   const error = new Error(errorMessage)
   error.msg = errorMessage

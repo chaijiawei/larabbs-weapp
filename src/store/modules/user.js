@@ -72,12 +72,7 @@ const actions = {
     const loginData = await wepy.wx.login()
     params.code = loginData.code
 
-    const response = await register(params)
-
-    commit('setToken', response.data)
-    auth.setToken(response.data)
-
-    dispatch('getUser')
+    await register(params)
   },
 
   async updateUser ({ commit }, params = {}) {

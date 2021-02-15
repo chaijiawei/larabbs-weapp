@@ -121,18 +121,27 @@ wepy.page({
       }
 
       // 调用接口删除话题
-      const deleteResponse = await deleteTopic(this.topic.id)
+      try {
+        await deleteTopic(this.topic.id)
+        wx.showToast({
+          title: '删除成功',
+          icon: 'success'
+        })
 
-      wx.showToast({
-        title: '删除成功',
-        icon: 'success'
-      })
-
-      // 2 秒后返回上一页
-      setTimeout(() => {
-        eventHub.$emit('topic-deleted');
-        wx.navigateBack()
-      }, 2000)
+        // 2 秒后返回上一页
+        setTimeout(() => {
+          eventHub.$emit('topic-deleted');
+          wx.navigateBack()
+        }, 2000)
+      } catch(err) {
+        if(err.response.statusCode === 403) {
+          err.msg = '您没有权限删除'
+        }
+        wx.showModal({
+          title: '提示',
+          content: err.msg
+        })
+      }
     }
   },
   onLoad(options) {

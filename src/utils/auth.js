@@ -27,7 +27,7 @@ export function logout() {
 }
 
 export function setPermissions(permissions) {
-  return wx.setStorageSync('permissions');
+  return wx.setStorageSync('permissions', permissions);
 }
 
 export function getPermissions() {
