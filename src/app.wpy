@@ -35,6 +35,7 @@ wepy.app({
     'pages/users/edit',
     'pages/auth/login',
     'pages/auth/register',
+    'pages/replies/index',
   ],
   window: {
     backgroundTextStyle: 'light',
