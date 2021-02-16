@@ -115,9 +115,7 @@ wepy.page({
     await this.loadCategories()
 
     eventHub.$on('topic-deleted', () => {
-      this.page = 1
-      this.noMoreData = false
-      this.loadData(true)
+      this.refreshPage()
     })
   },
   methods: {
@@ -148,10 +146,8 @@ wepy.page({
     async changeCategory (category = {}) {
       this.currentCategory = category
       this.categoryOpen = false
-      this.page = 1
 
-      // 设置 reset 为 true
-      await this.loadData(true)
+      this.refreshPage()
     }
   }
 

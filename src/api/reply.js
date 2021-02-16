@@ -5,3 +5,10 @@ export function getReplies(data) {
     data: data
   })
 }
+
+export function createReply(data) {
+  return authRequest('replies', {
+    method: 'POST',
+    data: data
+  })
+}

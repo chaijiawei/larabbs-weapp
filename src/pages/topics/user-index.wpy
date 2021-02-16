@@ -29,9 +29,7 @@ wepy.page({
     await this.loadData()
 
     eventHub.$on('topic-deleted', () => {
-      this.page = 1
-      this.noMoreData = false
-      this.loadData(true)
+      this.refreshPage()
     })
   },
   methods: {

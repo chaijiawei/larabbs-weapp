@@ -8,10 +8,8 @@ export default {
     // 是否在加载中
     isLoading: false
   },
-  async onPullDownRefresh() {
-    this.page = 1
-    this.noMoreData = false
-    await this.loadData(true)
+  onPullDownRefresh() {
+    this.refreshPage()
     wx.stopPullDownRefresh()
   },
   async onReachBottom () {
@@ -39,6 +37,12 @@ export default {
       if (pagination.current_page === pagination.last_page) {
         this.noMoreData = true
       }
-    }
+    },
+
+    async refreshPage() {
+      this.page = 1
+      this.noMoreData = false
+      await this.loadData(true)
+    },
   }
 }
