@@ -29,6 +29,10 @@ wepy.page({
     this.userId = options.id
     this.loadData()
 
+    eventHub.$on('reply-created', () => {
+      this.refreshPage()
+    })
+
     eventHub.$on('reply-deleted', (reply) => {
       this.resourceData = this.resourceData.filter((r) => r.id !== reply.id)
     })
@@ -37,7 +41,7 @@ wepy.page({
     fetchData() {
       return getReplies({
         page: this.page,
-        include: 'user',
+        include: 'user,topic',
         'filter[user_id]': this.userId,
       })
     }

@@ -34,12 +34,16 @@ wepy.page({
     eventHub.$on('reply-created', () => {
       this.refreshPage()
     })
+
+    eventHub.$on('reply-deleted', (reply) => {
+      this.resourceData = this.resourceData.filter((r) => r.id !== reply.id)
+    });
   },
   methods: {
     fetchData() {
       return  getReplies({
         page: this.page,
-        include: 'user',
+        include: 'user,topic',
         'filter[topic_id]': this.topicId,
       })
     }

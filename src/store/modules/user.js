@@ -2,6 +2,7 @@ import wepy from '@wepy/core'
 import { login, logout, refresh, register } from '@/api/auth'
 import * as auth from '@/utils/auth'
 import isEmpty from 'lodash/isEmpty'
+import find from 'lodash/find'
 import { getCurrentUser, updateUser, getUserPermissions } from '@/api/user'
 
 const getDefaultState = () => {
@@ -22,6 +23,11 @@ const getters = {
   accessToken: state => state.accessToken,
   accessTokenExpiredAt: state => state.accessTokenExpiredAt,
   permissions: state => state.permissions,
+  canManageContents: state => {
+    return find(state.permissions, function(permission) {
+      return permission.name === 'manage_contents'
+    }) !== undefined;
+  },
 }
 
 // 定义 actions

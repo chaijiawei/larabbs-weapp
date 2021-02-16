@@ -68,6 +68,7 @@
                 <div class="weui-media-box__desc"><rich-text nodes="{{ reply.content }}" bindtap="tap"></rich-text></div>
                 <div class="weui-media-box__desc"><datetime-diff :datetime="reply.created_at"></datetime-diff></div>
               </div>
+              <reply-delete :reply="reply"></reply-delete>
             </div>
           </div>
         </div>
@@ -89,7 +90,8 @@
   navigationBarTitleText: '话题详情',
   usingComponents: {
     "datetime-diff": "~@/components/datetime-diff",
-    "reply-create-link": "~@/components/reply-create-link"
+    "reply-create-link": "~@/components/reply-create-link",
+    "reply-delete": "~@/components/reply-delete"
   }
 }
 </config>
@@ -99,7 +101,6 @@ import store from '@/store'
 import { mapGetters } from '@wepy/x'
 import { getTopic, deleteTopic } from '@/api/topic'
 import eventHub from '@/common/eventHub'
-import find from 'lodash/find'
 
 wepy.page({
   store,
@@ -108,23 +109,18 @@ wepy.page({
     topic: null,
   },
   computed: {
-    ...mapGetters(['user', 'isLoggedIn', 'permissions']),
+    ...mapGetters(['user', 'isLoggedIn', 'canManageContents']),
     // 是否可以删除话题
     canDelete() {
-      if (this.isLoggedIn && this.topic) {
-        if(this.user.id === this.topic.user_id) { //话题拥有者
-          return true
-        } else { //判断权限
-          //如果拥有 manage_contents 则可以删除
-          if(find(this.permissions, function(permission) {
-            return permission.name === 'manage_contents'
-          })) {
-            return true
-          }
-        }
+      if (!this.isLoggedIn || !this.topic) {
+        return false;
       }
 
-      return false;
+      if(this.canManageContents) {
+        return true;
+      }
+
+      return this.user.id === this.topic.user_id
     }
   },
   methods: {
@@ -186,7 +182,11 @@ wepy.page({
 
     eventHub.$on('reply-created', () => {
       this.loadTopic(options.id)
-    });
+    })
+
+    eventHub.$on('reply-deleted', (reply) => {
+      this.loadTopic(options.id)
+    })
   }
 })
 </script>

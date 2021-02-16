@@ -12,3 +12,9 @@ export function createReply(data) {
     data: data
   })
 }
+
+export function deleteReply(replyId) {
+  return authRequest(`replies/${replyId}`, {
+    method: 'DELETE',
+  })
+}
