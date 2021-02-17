@@ -3,7 +3,7 @@ import keys from 'lodash/keys'
 import store from '@/store'
 
 // 服务器接口地址
-const host = 'http://larabbs-api.test/api/v1/'
+const host = API_URL
 
 // 普通请求
 const request = async (url, options = {}, showLoading = true) => {
